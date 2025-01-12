@@ -1,6 +1,8 @@
 # Define the API Gateway resource for the Flask-based API
 resource "aws_apigatewayv2_api" "flask_api" {
   name          = "flask-api"      # Name of the API Gateway
+  description   = "Flask(y) like APIs deployed with Lambda"
+                                   # API Gateway Description
   protocol_type = "HTTP"           # Protocol type (HTTP or WEBSOCKET)
 }
 
