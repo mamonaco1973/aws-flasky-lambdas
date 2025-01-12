@@ -1,6 +1,12 @@
 # Retrieve the API ID for the API Gateway with the name 'flask-api'
 $API_ID = (aws apigatewayv2 get-apis --query "Items[?Name=='flask-api'].{id:ApiId}" --output text)
 
+# Check if API_ID is empty
+if ([string]::IsNullOrWhiteSpace($API_ID)) {
+    Write-Error "Error: API_ID is not set or could not be retrieved. Please ensure the API Gateway 'flask-api' exists."
+    exit 1
+}
+
 # Construct the Service URL
 $SERVICE_URL = "https://${API_ID}.execute-api.us-east-2.amazonaws.com"
 
