@@ -1,45 +1,51 @@
-# Create an IAM user for invoking the function
+# Conditional creation of IAM user for invoking the function
 resource "aws_iam_user" "flasky_user" {
-  name = "flasky-api-user"  # The name assigned to the IAM user. This user will be used specifically for invoking API Gateway.
+  count = var.authorization_type == "AWS_IAM" ? 1 : 0  # Create only if authorization_type equals "AWS_IAM"
+  name  = "flasky-api-user"  # The name assigned to the IAM user.
 }
 
-# Create an IAM policy that allows the user to invoke API Gateway
+# Conditional creation of IAM policy for API Gateway access
 resource "aws_iam_policy" "flasky_policy" {
-  name        = "FlaskyAPIAccessPolicy" # The name of the policy for clear identification.
-  description = "Policy granting permissions to invoke API Gateway" # A description to document the purpose of this policy.
+  count       = var.authorization_type == "AWS_IAM" ? 1 : 0  # Create only if authorization_type equals "AWS_IAM"
+  name        = "FlaskyAPIAccessPolicy"  # The name of the policy for identification.
+  description = "Policy granting permissions to invoke API Gateway"  # Description of the policy's purpose.
 
-  # The policy is defined using JSON. It allows invoking API Gateway endpoints.
+  # Define the policy JSON to allow invoking API Gateway
   policy      = jsonencode({
-    Version = "2012-10-17" # Specifies the version of the IAM policy language. This is the standard version.
-    Statement = [          # List of permissions or actions the policy grants.
+    Version = "2012-10-17"
+    Statement = [
       {
-        Effect   = "Allow" # Specifies that the action is allowed.
-        Action   = "execute-api:Invoke" # Grants the ability to invoke API Gateway endpoints.
-        Resource = "${aws_apigatewayv2_api.flask_api.execution_arn}/*" # Targets the specific API Gateway resource (execution ARN) and all its stages/methods.
+        Effect   = "Allow"
+        Action   = "execute-api:Invoke"
+        Resource = "${aws_apigatewayv2_api.flask_api.execution_arn}/*" # Targets the specific API Gateway execution ARN.
       }
     ]
   })
 }
 
-# Attach the previously created policy to the IAM user
+# Conditional attachment of policy to the IAM user
 resource "aws_iam_user_policy_attachment" "flasky_user_policy" {
-  user       = aws_iam_user.flasky_user.name # The IAM user to whom the policy will be attached.
-  policy_arn = aws_iam_policy.flasky_policy.arn # The ARN (Amazon Resource Name) of the policy being attached.
+  count      = var.authorization_type == "AWS_IAM" ? 1 : 0  # Attach policy only if authorization_type equals "AWS_IAM"
+  user       = aws_iam_user.flasky_user[0].name  # Reference the first instance of the IAM user.
+  policy_arn = aws_iam_policy.flasky_policy[0].arn  # Reference the first instance of the policy.
 }
 
-# (Optional) Create an access key for the IAM user to enable programmatic access
+# Conditional creation of access key for programmatic access
 resource "aws_iam_access_key" "flasky_access_key" {
-  user = aws_iam_user.flasky_user.name # Specifies the IAM user for whom the access key will be generated.
+  count = var.authorization_type == "AWS_IAM" ? 1 : 0  # Create access key only if authorization_type equals "AWS_IAM"
+  user  = aws_iam_user.flasky_user[0].name  # Reference the first instance of the IAM user.
 }
 
-# Output the access key ID (use with caution in production to avoid accidental exposure)
+# Output the access key ID conditionally
 output "access_key_id" {
-  value       = aws_iam_access_key.flasky_access_key.id # Outputs the generated access key ID for programmatic use.
-  sensitive   = true  # Marks the output as sensitive, ensuring it does not appear in plain text in Terraform logs or output.
+  value       = var.authorization_type == "AWS_IAM" && length(aws_iam_access_key.flasky_access_key) > 0 ? aws_iam_access_key.flasky_access_key[0].id : null
+  sensitive   = true  # Mark the output as sensitive to hide it in logs.
+  description = "Access key ID for programmatic use"  # Description of the output.
 }
 
-# Output the secret access key (use securely and never expose publicly)
+# Output the secret access key conditionally
 output "secret_access_key" {
-  value       = aws_iam_access_key.flasky_access_key.secret # Outputs the secret access key, which must be securely stored.
-  sensitive   = true  # Marks the output as sensitive to avoid accidental exposure in logs or output.
+  value       = var.authorization_type == "AWS_IAM" && length(aws_iam_access_key.flasky_access_key) > 0 ? aws_iam_access_key.flasky_access_key[0].secret : null
+  sensitive   = true  # Mark the output as sensitive to hide it in logs.
+  description = "Secret access key for programmatic use"  # Description of the output.
 }
