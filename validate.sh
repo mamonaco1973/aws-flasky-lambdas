@@ -2,7 +2,7 @@
 
 # Configuration
 
-API_ID=$(aws apigatewayv2 get-apis --query "Items[?Name=='flask-api'].{id:ApiId}" --output text)        
+API_ID=$(aws apigatewayv2 get-apis --query "Items[?Name=='flasky-api'].{id:ApiId}" --output text)        
 
 # Check if API_ID is empty or undefined
 if [ -z "$API_ID" ]; then

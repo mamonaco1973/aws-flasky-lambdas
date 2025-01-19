@@ -1,5 +1,5 @@
 # Retrieve the API ID for the API Gateway with the name 'flask-api'
-$API_ID = (aws apigatewayv2 get-apis --query "Items[?Name=='flask-api'].{id:ApiId}" --output text)
+$API_ID = (aws apigatewayv2 get-apis --query "Items[?Name=='flasky-api'].{id:ApiId}" --output text)
 
 # Check if API_ID is empty
 if ([string]::IsNullOrWhiteSpace($API_ID)) {
