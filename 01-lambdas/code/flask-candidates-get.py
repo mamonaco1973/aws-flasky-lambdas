@@ -17,12 +17,18 @@ def lambda_handler(event, context):
         if not items:
             return {
                 "statusCode": 404,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
                 "body": json.dumps({"error": "No candidates found"})
             }
         
         # Return the list of candidates
         return {
             "statusCode": 200,
+            "headers": {
+                "Content-Type": "application/json"
+            },
             "body": json.dumps(items)
         }
 
@@ -30,5 +36,8 @@ def lambda_handler(event, context):
         # Handle unexpected errors
         return {
             "statusCode": 500,
+            "headers": {
+                "Content-Type": "application/json"
+            },
             "body": json.dumps({"error": "An error occurred", "details": str(e)})
         }

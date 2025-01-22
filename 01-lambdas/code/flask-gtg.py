@@ -11,6 +11,9 @@ def lambda_handler(event, context):
     if details:
         return {
             "statusCode": 200,
+            "headers": {
+                "Content-Type": "application/json"
+            },
             "body": json.dumps({
                 "connected": "true",
                 "hostname": instance_id
@@ -19,5 +22,8 @@ def lambda_handler(event, context):
     else:
         return {
             "statusCode": 200,
-            "body": ""
+            "body": "{}",
+            "headers": {
+                "Content-Type": "application/json"
+            }
         }

@@ -15,6 +15,9 @@ def lambda_handler(event, context):
         if not name:
             return {
                 "statusCode": 400,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
                 "body": json.dumps({"error": "Candidate name is required"})
             }
 
@@ -24,6 +27,12 @@ def lambda_handler(event, context):
         # Return a success response
         return {
             "statusCode": 200,
+            "headers": {
+                    "Content-Type": "application/json"
+            },
+            "headers": {
+                "Content-Type": "application/json"
+            },
             "body": json.dumps({"CandidateName": name})
         }
 
@@ -31,5 +40,8 @@ def lambda_handler(event, context):
         # Handle unexpected errors
         return {
             "statusCode": 500,
+            "headers": {
+                    "Content-Type": "application/json"
+            },
             "body": json.dumps({"error": "Unable to update candidate", "details": str(e)})
         }
