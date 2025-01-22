@@ -1,6 +1,6 @@
 
 Write-Host "NOTE: Validating that required commands are found in your PATH." -ForegroundColor Green
-$commands = @("aws", "packer", "terraform")
+$commands = @("aws", "terraform")
 $all_found = $true
 
 foreach ($cmd in $commands) {
