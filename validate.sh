@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export AWS_DEFAULT_REGION=us-east-2
+
 # Configuration
 
 API_ID=$(aws apigatewayv2 get-apis --query "Items[?Name=='flasky-api'].{id:ApiId}" --output text)        

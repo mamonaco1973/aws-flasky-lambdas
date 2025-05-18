@@ -1,3 +1,5 @@
+export AWS_DEFAULT_REGION=us-east-2
+
 # Navigate to the 01-lambdas directory
 cd "01-lambdas"
 
